@@ -1,7 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import time
-import pandas
+import pandas as pd
+
+#'https://www.pro-football-reference.com/players/E/EricAl01.htm'   <- Link to team def as template
+
 
 #Gets the URL to be scraped and takes the page content as its input
 URL = "https://www.pro-football-reference.com/players/"
@@ -12,10 +15,12 @@ if page.status_code == 200:
 else:
     print(f"Failed to retrieve data: {page.status_code}")
 
+
 #Finds the content div and gets the contents of an unordered list
 #These list items contain hrefs to help build links to NFL players sorted by an index of letters
 results = soup.find(id="content")
 items = results.find("ul", class_="page_index")
+
 
 #Loops through each list item and builds a link to a letter
 for item in items:
@@ -34,5 +39,8 @@ for item in items:
     #Sleeps to avoid rate limiting as per PFR scraping guidlines
     time.sleep(4)
 
-
-
+#Gets the table, apply below
+url = requests.get('https://www.pro-football-reference.com/players/E/EricAl01.htm')
+c = url.content
+df = pd.read_html(c)[0]
+print(df)
