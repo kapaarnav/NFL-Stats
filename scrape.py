@@ -6,7 +6,11 @@ import pandas
 #Gets the URL to be scraped and takes the page content as its input
 URL = "https://www.pro-football-reference.com/players/"
 page = requests.get(URL)
-soup = BeautifulSoup(page.content, "html.parser")
+
+if page.status_code == 200:
+    soup = BeautifulSoup(page.text, 'html.parser')
+else:
+    print(f"Failed to retrieve data: {page.status_code}")
 
 #Finds the content div and gets the contents of an unordered list
 #These list items contain hrefs to help build links to NFL players sorted by an index of letters
@@ -25,7 +29,8 @@ for item in items:
     players = soup.find(id="div_players")
     for bold in players.find_all('b'):
         link = "https://www.pro-football-reference.com"  + str(bold.find('a', href = True)['href'])
-
+        print(link)
+        
     #Sleeps to avoid rate limiting as per PFR scraping guidlines
     time.sleep(4)
 
