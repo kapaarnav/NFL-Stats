@@ -5,7 +5,6 @@ import pandas as pd
 
 #'https://www.pro-football-reference.com/players/E/EricAl01.htm'   <- Link to team def as template
 
-
 #Gets the URL to be scraped and takes the page content as its input
 URL = "https://www.pro-football-reference.com/players/"
 page = requests.get(URL)
