@@ -20,24 +20,28 @@ else:
 results = soup.find(id="content")
 items = results.find("ul", class_="page_index")
 
+positions = set(["(QB)", "(RB)", "(WR)", "(TE)", "(K)"])
 
-# #Loops through each list item and builds a link to a letter
-# for item in items:
+#Loops through each list item and builds a link to a letter
+for item in items:
     
-#     #Gets the link to each letter and parses through it
-#     link = "https://www.pro-football-reference.com" + str(item.find('a', href=True)['href'])
-#     page = requests.get(link)
-#     soup = BeautifulSoup(page.content, "html.parser")
+    #Gets the link to each letter and parses through it
+    link = "https://www.pro-football-reference.com" + str(item.find('a', href=True)['href'])
+    page = requests.get(link)
+    soup = BeautifulSoup(page.content, "html.parser")
 
-#     #Gets the link of each player that is currently active
-#     players = soup.find(id="div_players")
-#     for bold in players.find_all('b'):
-#         link = "https://www.pro-football-reference.com"  + str(bold.find('a', href = True)['href'])
-#         print(link)
+    #Gets the link of each player that is currently active
+    players = soup.find(id="div_players")
+    for bold in players.find_all('b'):
+
+        if bold.contents[-1].strip() in positions:
+            link = "https://www.pro-football-reference.com"  + str(bold.find('a', href = True)['href'])
+            print(link)
         
-#     #Sleeps to avoid rate limiting as per PFR scraping guidlines
-#     time.sleep(4)
+    #Sleeps to avoid rate limiting as per PFR scraping guidlines
+    time.sleep(4)
 
+'''
 #Gets the table, apply below
 url = requests.get('https://www.pro-football-reference.com/players/E/EricAl01.htm')
 soup = BeautifulSoup(url.content, 'html.parser')
@@ -46,3 +50,4 @@ print(position)
 c = url.content
 df = pd.read_html(c)[0]
 #print(df)
+'''
