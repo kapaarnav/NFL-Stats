@@ -36,7 +36,6 @@ functions.set_headers(header_links[2], "receiving_and_rushing")
 functions.set_headers(header_links[3], "receiving_and_rushing")
 functions.set_headers(header_links[4], "kicking")
 
-functions.send_to_csv("https://www.pro-football-reference.com/players/H/HenrDe00.htm", "data/RB.csv", "rushing_and_receiving")
 
 #Loops through each list item and builds a link to a letter
 for item in items:
@@ -55,15 +54,15 @@ for item in items:
         position = bold.contents[-1].strip()
 
         if position == "(QB)":
-            offense["QB"].append(link)
+            functions.send_to_csv(link, "data/QB.csv", "passing")
         elif position == "(RB)":
-            offense["RB"].append(link)
+            functions.send_to_csv(link, "data/RB.csv", "rushing_and_receiving")
         elif position == "(WR)":
-            offense["WR"].append(link)
+            functions.send_to_csv(link, "data/WR.csv", "receiving_and_rushing")
         elif position == "(TE)":
-            offense["TE"].append(link)
+            functions.send_to_csv(link, "data/TE.csv", "receiving_and_rushing")
         elif position == "(K)":
-            offense["K"].append(link)            
+            functions.send_to_csv(link, "data/K.csv", "kicking")        
         
     #Sleeps to avoid rate limiting as per PFR scraping guidlines
     time.sleep(4)
