@@ -1,14 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
-import time
 import pandas as pd
-
-#'https://www.pro-football-reference.com/players/E/EricAl01.htm'   <- Link to team def as template
+import functions
+import time
 
 #Gets the URL to be scraped and takes the page content as its input
 URL = "https://www.pro-football-reference.com/players/"
 page = requests.get(URL)
 
+#Makes sure the status of the page is valid
 if page.status_code == 200:
     soup = BeautifulSoup(page.text, 'html.parser')
 else:
@@ -20,7 +20,23 @@ else:
 results = soup.find(id="content")
 items = results.find("ul", class_="page_index")
 
-positions = set(["(QB)", "(RB)", "(WR)", "(TE)", "(K)"])
+curryear = 2024
+offense = {"(QB)": [], "(RB)": [], "WR": [], "TE": [], "K": []}
+
+
+#Uses one player from each position as examples to set the header for the CSV file per position
+header_links = [("https://www.pro-football-reference.com/players/H/HenrDe00.htm", "data/RB.csv"),
+              ("https://www.pro-football-reference.com/players/M/MahoPa00.htm", "data/QB.csv"),
+                ("https://www.pro-football-reference.com/players/J/JeffJu00.htm", "data/WR.csv"),
+                  ("https://www.pro-football-reference.com/players/K/KelcTr00.htm", "data/TE.csv"),
+                   ("https://www.pro-football-reference.com/players/T/TuckJu00.htm", "data/K.csv")]
+functions.set_headers(header_links[0], "rushing_and_receiving")
+functions.set_headers(header_links[1], "passing")
+functions.set_headers(header_links[2], "receiving_and_rushing")
+functions.set_headers(header_links[3], "receiving_and_rushing")
+functions.set_headers(header_links[4], "kicking")
+
+functions.send_to_csv("https://www.pro-football-reference.com/players/H/HenrDe00.htm", "data/RB.csv", "rushing_and_receiving")
 
 #Loops through each list item and builds a link to a letter
 for item in items:
@@ -34,20 +50,20 @@ for item in items:
     players = soup.find(id="div_players")
     for bold in players.find_all('b'):
 
-        if bold.contents[-1].strip() in positions:
-            link = "https://www.pro-football-reference.com"  + str(bold.find('a', href = True)['href'])
-            print(link)
+        #Gets the player link and their position
+        link = "https://www.pro-football-reference.com"  + str(bold.find('a', href = True)['href'])
+        position = bold.contents[-1].strip()
+
+        if position == "(QB)":
+            offense["QB"].append(link)
+        elif position == "(RB)":
+            offense["RB"].append(link)
+        elif position == "(WR)":
+            offense["WR"].append(link)
+        elif position == "(TE)":
+            offense["TE"].append(link)
+        elif position == "(K)":
+            offense["K"].append(link)            
         
     #Sleeps to avoid rate limiting as per PFR scraping guidlines
     time.sleep(4)
-
-'''
-#Gets the table, apply below
-url = requests.get('https://www.pro-football-reference.com/players/E/EricAl01.htm')
-soup = BeautifulSoup(url.content, 'html.parser')
-position = (soup.findAll('p')[1].text)[0:14] #substring to get position
-print(position)
-c = url.content
-df = pd.read_html(c)[0]
-#print(df)
-'''
