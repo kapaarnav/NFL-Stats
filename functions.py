@@ -11,6 +11,7 @@ def send_to_csv(player_link, csv_file, tbody_id):
     url = requests.get(player_link)
     soup = BeautifulSoup(url.content, 'html.parser')
 
+    #Makes sure the status of the page is valid
     if url.status_code == 200:
         soup = BeautifulSoup(url.text, 'html.parser')
     else:
